@@ -9,10 +9,6 @@
  * For ESP8266 and NodeMCU - Board Version 2.6.3
  * http://arduino.esp8266.com/stable/package_esp8266com_index.json
  * ------------------------------------------------------------------------
- * HTTPS Redirect Library:
- * https://github.com/jbuszkie/HTTPSRedirect
- * Example Arduino/ESP8266 code to upload data to Google Sheets
- * ------------------------------------------------------------------------*/
  
 
 #include <SPI.h>
@@ -122,23 +118,23 @@ void loop()
   WriteDataToBlock(blockNum, buffer);
   ReadDataFromBlock(blockNum, readBlockData);
   dumpSerial(blockNum, readBlockData);
-  //MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+//  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
   Serial.println(F("---------------------------------------"));
-  Serial.println(F("Enter Phone Number, ending with #"));
+  Serial.println(F("Enter Gender (M or F), ending with #"));
   len = Serial.readBytesUntil('#', (char *) buffer, 16);
   for (byte i = len; i < 16; i++) buffer[i] = ' ';
   blockNum = 8;
   WriteDataToBlock(blockNum, buffer);
   ReadDataFromBlock(blockNum, readBlockData);
   dumpSerial(blockNum, readBlockData);
-  Serial.println(F("---------------------------------------"));
-  Serial.println(F("Enter Address, ending with #"));
-  len = Serial.readBytesUntil('#', (char *) buffer, 16);
-  for (byte i = len; i < 16; i++) buffer[i] = ' ';
-  blockNum = 9;
-  WriteDataToBlock(blockNum, buffer);
-  ReadDataFromBlock(blockNum, readBlockData);
-  dumpSerial(blockNum, readBlockData);
+//  Serial.println(F("---------------------------------------"));
+//  Serial.println(F("Enter Address, ending with #"));
+//  len = Serial.readBytesUntil('#', (char *) buffer, 16);
+//  for (byte i = len; i < 16; i++) buffer[i] = ' ';
+//  blockNum = 9;
+//  WriteDataToBlock(blockNum, buffer);
+//  ReadDataFromBlock(blockNum, readBlockData);
+//  dumpSerial(blockNum, readBlockData);
   Serial.println("Success, Reset the ESP module to enter new data");
 }
 
