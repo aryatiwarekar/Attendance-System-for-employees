@@ -30,11 +30,11 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org");
 String months[12]={"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 //---------------------------------------------------------------------------------------------------------
 // Enter Google Script Deployment ID:
-const char *GScriptId = "AKfycbx1VvOVU9o0AN4BC1q5m2x9kc8l7cALSq0b3hePpV8S6iI1nfKtb03wTHHxejPXnzU1mA";
+const char *GScriptId = "ENTER YOUR GSCRIPT ID";
 //---------------------------------------------------------------------------------------------------------
 // Enter network credentials:
-const char* ssid     = "Arya";
-const char* password = "String args[]";
+const char* ssid     = "YOUR SSID";
+const char* password = "YOUR PASSWORD";
 //---------------------------------------------------------------------------------------------------------
 // Enter command (insert_row or append_row) and your Google Sheets sheet name (default is Sheet1):
 String sheet_name = "\"Sheet1\"";
@@ -44,7 +44,7 @@ String payload = "";
 // Google Sheets setup (do not edit)
 const char* host        = "script.google.com";
 const int   httpsPort   = 443;
-const char* fingerprint = "4C 0D 17 8C F1 30 7C 3A 6F 9B 8E B4 83 0E 5C BD ED 17 3E 95";
+const char* fingerprint = "GOOGLE SHEET FINGERPRINT";
 String url = String("/macros/s/") + GScriptId + "/exec";
 HTTPSRedirect* client = nullptr;
 //------------------------------------------------------------
