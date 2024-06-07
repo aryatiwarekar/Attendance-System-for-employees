@@ -26,7 +26,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 String response = " ";
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "pool.ntp.org");
+NTPClient timeClient(ntpUDP, "in.pool.ntp.org");
 String months[12]={"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 //---------------------------------------------------------------------------------------------------------
 // Enter Google Script Deployment ID:
@@ -52,7 +52,7 @@ HTTPSRedirect* client = nullptr;
 String student_id;
 String student_name;
 //------------------------------------------------------------
-int blocks[] = {4, 5};
+int blocks[] = {4, 5, 8};
 #define total_blocks  (sizeof(blocks) / sizeof(blocks[0]))
 //------------------------------------------------------------
 #define RST_PIN  0  //D3
@@ -106,6 +106,8 @@ void setup() {
   Serial.println("Connection established!");
   Serial.print("IP address:\t");
   Serial.println(WiFi.localIP());
+  WiFi.setAutoReconnect(true);
+  WiFi.persistent(true);
   //----------------------------------------------------------
   // Use HTTPSRedirect class to create a new TLS connection
   client = new HTTPSRedirect(httpsPort);
@@ -170,6 +172,7 @@ void setup() {
 ****************************************************************************************************/
 void loop() {
   //----------------------------------------------------------------
+  if(WiFi.status() == WL_CONNECTED){
   timeClient.update();
   time_t epochTime = timeClient.getEpochTime();
   //Get a time structure
@@ -178,6 +181,18 @@ void loop() {
   String currentMonthName = months[currentMonth-1];
   int currentYear = ptm->tm_year+1900;
   sheet_name = "\"" + currentMonthName + " " + currentYear + "\"";
+  String default_date = "January 1970";
+//  Serial.println(sheet_name);
+//  Serial.println(timeClient.getFormattedTime());
+  if(sheet_name.equals("\"" + default_date + "\"")){
+    timeClient.begin();
+    timeClient.setTimeOffset(19800);
+    lcd.setCursor(0, 0); //col=0 row=0
+    lcd.print("Please restart");
+    lcd.setCursor(0, 1);
+    lcd.print("the system");
+    return;
+  }
   String payload_base =  "{\"command\": \"insert_row\", \"sheet_name\":" + sheet_name+ ", \"values\": ";
   
   static bool flag = false;
@@ -202,7 +217,7 @@ void loop() {
   lcd.setCursor(0, 0);
   lcd.print("Welcome to HPTC");
   lcd.setCursor(0, 1); //col=0 row=0
-  lcd.print("Scan your Tag");
+  lcd.print(timeClient.getFormattedTime());
 
   /* Initialize MFRC522 Module */
   mfrc522.PCD_Init();
@@ -280,9 +295,9 @@ void loop() {
   // Create json object string to send to Google Sheets
   // values = "\"" + value0 + "," + value1 + "," + value2 + "\"}"
   payload = payload_base + values;
-  digitalWrite(BUZZER, HIGH);
+  analogWrite(BUZZER, 50);
   delay(1000);
-  digitalWrite(BUZZER, LOW);
+  analogWrite(BUZZER, 0);
   //----------------------------------------------------------------
   lcd.clear();
   lcd.setCursor(0, 0); //col=0 row=0
@@ -299,31 +314,55 @@ void loop() {
     response.trim();
     Serial.println(response);
     if(response == "1"){
-      digitalWrite(BUZZER, HIGH);
+      analogWrite(BUZZER, 50);
       delay(200);
-      digitalWrite(BUZZER, LOW);
+      analogWrite(BUZZER, 0);
     }
     else if(response == "2"){
-      digitalWrite(BUZZER, HIGH);
+      analogWrite(BUZZER, 50);
       delay(200);
-      digitalWrite(BUZZER, LOW);
+      analogWrite(BUZZER, 0);
       delay(200);
-      digitalWrite(BUZZER, HIGH);
+      analogWrite(BUZZER, 50);
       delay(200);
-      digitalWrite(BUZZER, LOW);
+      analogWrite(BUZZER, 0);
     }
     else if(response == "3"){
-      digitalWrite(BUZZER, HIGH);
+      analogWrite(BUZZER, 50);
       delay(200);
-      digitalWrite(BUZZER, LOW);
+      analogWrite(BUZZER, 0);
       delay(200);
-      digitalWrite(BUZZER, HIGH);
+      analogWrite(BUZZER, 50);
       delay(200);
-      digitalWrite(BUZZER, LOW);
+      analogWrite(BUZZER, 0);
       delay(200);
-      digitalWrite(BUZZER, HIGH);
+      analogWrite(BUZZER, 50);
       delay(200);
-      digitalWrite(BUZZER, LOW);
+      analogWrite(BUZZER, 0);
+    }
+    else{
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Something went");
+      lcd.setCursor(0,1);
+      lcd.print("wrong!");
+      analogWrite(BUZZER, 50);
+      delay(100);
+      analogWrite(BUZZER, 0);
+      delay(100);
+      analogWrite(BUZZER, 50);
+      delay(100);
+      analogWrite(BUZZER, 0);
+      delay(100);
+      analogWrite(BUZZER, 50);
+      delay(100);
+      analogWrite(BUZZER, 0);
+      delay(100);
+      analogWrite(BUZZER, 50);
+      delay(100);
+      analogWrite(BUZZER, 0);
+      return;
+  
     }
     
     lcd.clear();
@@ -331,7 +370,7 @@ void loop() {
     lcd.print("Name: " + student_name);
     lcd.setCursor(0, 1); //col=0 row=0
     lcd.print("Thank You!");
-    
+    delay(7000);
   }
   //----------------------------------------------------------------
   else {
@@ -345,8 +384,15 @@ void loop() {
   }
   //----------------------------------------------------------------
   // a delay of several seconds is required before publishing again
-  delay(5000);
+  
   payload = "";
+  }
+  else{
+    lcd.setCursor(0,0);
+    lcd.print("WiFi Not        ");
+    lcd.setCursor(0,1);
+    lcd.print("Connected       ");
+  }
 }
 
 
